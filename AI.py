@@ -7,7 +7,6 @@ import tkinter as tk
 from tkinter import messagebox
 from deepface import DeepFace
 
-# --------- Paths ---------
 dataset_path = "faces"
 os.makedirs(dataset_path, exist_ok=True)
 
@@ -16,7 +15,6 @@ labels_path = "labels.npy"
 attendance_folder = "attendance"
 os.makedirs(attendance_folder, exist_ok=True)
 
-# --------- Step 1: Capture Faces ---------
 def capture_faces():
     uid = uid_entry.get().strip()
     name = name_entry.get().strip()
@@ -53,12 +51,11 @@ def capture_faces():
     messagebox.showinfo("Capture Complete", f"Captured {count} images for {name} (UID: {uid})")
     status_label.config(text=f"✅ {count} images captured for {name} (UID: {uid})")
 
-# --------- Step 2: Train Recognizer ---------
 def train_recognizer():
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     faces = []
     labels = []
-    label_dict = {}  # UID -> numeric ID
+    label_dict = {} 
     current_id = 0
 
     for file in os.listdir(dataset_path):
@@ -83,7 +80,6 @@ def train_recognizer():
     messagebox.showinfo("Training", "✅ Training completed successfully!")
     status_label.config(text="✅ Training completed!")
 
-# --------- Step 3: Mark Attendance (Face Only) ---------
 def mark_attendance():
     if not os.path.exists(trainer_path):
         messagebox.showwarning("Error", "Train recognizer first!")
@@ -148,7 +144,6 @@ def mark_attendance():
     else:
         messagebox.showwarning("No Face Detected", "No attendance recorded!")
 
-# --------- Step 4: Check Attendance by UID ---------
 def check_attendance():
     uid = check_uid_entry.get().strip()
     today = datetime.now().strftime("%Y-%m-%d")
@@ -175,7 +170,6 @@ def check_attendance():
         tk.Label(history_frame, text=f"No attendance found for UID: {uid}",
                  font=("Helvetica", 12, "bold"), bg="#0D1117", fg="red").pack()
 
-# --------- Step 5: Emotion Detection (Separate) ---------
 def detect_emotions():
     cap = cv2.VideoCapture(0)
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
@@ -210,7 +204,6 @@ def detect_emotions():
     cv2.destroyAllWindows()
     status_label.config(text=f"✅ Emotion detection window closed")
 
-# --------- Step 6: GUI Setup ---------
 root = tk.Tk()
 root.title("🎥 Face Recognition Attendance System")
 root.geometry("700x600")
@@ -223,7 +216,6 @@ title_label = tk.Label(title_frame, text="Face Recognition Attendance",
                        font=("Helvetica", 20, "bold"), fg="#58FAF4", bg="#161B22")
 title_label.pack()
 
-# Input Frame
 input_frame = tk.LabelFrame(root, text="👤 Enter Details", font=("Helvetica", 12, "bold"),
                             fg="#FFFFFF", bg="#1E1E2F", padx=20, pady=20)
 input_frame.pack(pady=20, padx=20, fill="x")
@@ -236,7 +228,6 @@ tk.Label(input_frame, text="Name:", font=("Helvetica", 12), fg="white", bg="#1E1
 name_entry = tk.Entry(input_frame, font=("Helvetica", 12), width=30)
 name_entry.grid(row=1, column=1, padx=10, pady=10)
 
-# Buttons Frame
 button_frame = tk.Frame(root, bg="#0D1117")
 button_frame.pack(pady=10)
 
@@ -256,7 +247,6 @@ btn2.grid(row=0, column=1, padx=15, pady=10)
 btn3.grid(row=1, column=0, padx=15, pady=10)
 btn4.grid(row=1, column=1, padx=15, pady=10)
 
-# Check Attendance Frame
 check_frame = tk.LabelFrame(root, text="🔍 Check Attendance", font=("Helvetica", 12, "bold"),
                             fg="white", bg="#1E1E2F", padx=20, pady=20)
 check_frame.pack(pady=10, padx=20, fill="x")
@@ -272,8 +262,8 @@ btn_check.grid(row=0, column=2, padx=10, pady=10)
 history_frame = tk.Frame(root, bg="#0D1117")
 history_frame.pack(pady=10, padx=20, fill="both", expand=True)
 
-# Status Bar
 status_label = tk.Label(root, text="Ready", font=("Helvetica", 12), fg="lightgreen", bg="#0D1117")
 status_label.pack(side="bottom", fill="x", pady=10)
+
 
 root.mainloop()
